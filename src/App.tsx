@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Card, SideMenu } from "./components";
 
+import { useExpensesContext } from "./contexts/Expense";
+
 const data = [
   {
     id: "item-1",
@@ -64,7 +66,18 @@ const App = () => {
   const [items, setItems] = useState([]);
   const [itemsFull, setItemsFull] = useState([]);
 
+  const {
+    getExpenses,
+    expensesToBePaid,
+    expensesPaid,
+    changeExpensesPaid,
+    changeExpensesToBePaid,
+  } = useExpensesContext();
+
+  console.log(expensesToBePaid, "expensesToBePaid");
+
   useEffect(() => {
+    getExpenses();
     setItems(data);
     setItemsFull(data1);
   }, []);
@@ -83,8 +96,8 @@ const App = () => {
     }
 
     let add;
-    let active = items;
-    let complete = itemsFull;
+    let active = expensesToBePaid;
+    let complete = expensesPaid;
     // Source Logic
     if (source.droppableId === "TodosList") {
       add = active[source.index];
@@ -106,25 +119,29 @@ const App = () => {
     //   result.source.index,
     //   result.destination.index
     // );
-
-    setItemsFull(complete);
-    setItems(active);
+    console.log(active, complete, "ACTIVE");
+    changeExpensesToBePaid(active);
+    changeExpensesPaid(complete);
   };
 
   return (
-    <div className="flex w-screen dark:bg-gray-900">
+    <div className="flex h-screen w-screen dark:bg-gray-900">
       <SideMenu />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex ml-64 w-full justify-center">
           <Droppable droppableId="TodosList">
             {(provided, snapshot) => (
               <div
-                className="bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
+                className="w-64 bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {items.map((item: any, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                {expensesToBePaid.map((item: any, index) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.name}
+                    index={index}
+                  >
                     {(provided, snapshot) => (
                       <div
                         className="card"
@@ -132,7 +149,12 @@ const App = () => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <Card snapshot={snapshot} />
+                        <Card
+                          color={item.color}
+                          category={item.category}
+                          name={item.name}
+                          value={item.value}
+                        />
                       </div>
                     )}
                   </Draggable>
@@ -144,12 +166,16 @@ const App = () => {
           <Droppable droppableId="TodosFullList">
             {(provided, snapshot) => (
               <div
-                className="bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
+                className="w-64 bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {itemsFull.map((item: any, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                {expensesPaid.map((item: any, index) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.name}
+                    index={index}
+                  >
                     {(provided, snapshot) => (
                       <div
                         className="card"
@@ -157,7 +183,12 @@ const App = () => {
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <Card />
+                        <Card
+                          color={item.color}
+                          category={item.category}
+                          name={item.name}
+                          value={item.value}
+                        />
                       </div>
                     )}
                   </Draggable>

@@ -10,8 +10,12 @@ import {
   ThreeIcon,
   TwoIcon,
 } from "../assets";
+import { useExpensesContext } from "../contexts/Expense";
 
 export function SideMenu() {
+  const { currentMonth } = useExpensesContext();
+  console.log(currentMonth, "currentMonth");
+
   return (
     <aside
       id="separator-sidebar"
@@ -41,7 +45,11 @@ export function SideMenu() {
           <li>
             <a
               href="#"
-              className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              className={
+                currentMonth.month === "março"
+                  ? "flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:bg-gray-600 dark:hover:bg-gray-600"
+                  : "flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              }
             >
               <ThreeIcon />
               <span className="ml-3">Março</span>
