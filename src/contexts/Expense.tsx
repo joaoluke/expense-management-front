@@ -17,7 +17,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const formatDate = (date) => {
+  const formatDate = (date: any) => {
     return {
       month: format(date, "LLLL", { locale: ptBR }),
       value: format(date, "L", { locale: ptBR }),
@@ -49,17 +49,17 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     const response = await API.post<any>("expenses/create/", data);
 
     setOpenModal(false);
-    setTotalToPay(Number(totalToPay) + Number(response.data.value))
+    setTotalToPay(Number(totalToPay) + Number(response.data.value));
 
     setExpensesToBePaid([response.data, ...expensesToBePaid]);
   };
 
   const changeExpensesToBePaid = (value) => {
-    setExpensesToBePaid(value);
+    setExpensesToBePaid(value)
   };
 
   const changeExpensesPaid = (value) => {
-    setExpensesPaid(value);
+    setExpensesPaid(value)
   };
 
   return (
