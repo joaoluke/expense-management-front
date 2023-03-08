@@ -1,4 +1,6 @@
 import Modal from "react-modal";
+import { parseISO, format } from "date-fns";
+
 import { useExpensesContext } from "../contexts/Expense";
 
 const customStyles = {
@@ -15,7 +17,7 @@ const customStyles = {
 };
 
 export const ModalAdd = () => {
-  const { changeModal, openModal } = useExpensesContext();
+  const { changeModal, openModal, currentMonth, createExpenses } = useExpensesContext();
   const onSubmit = (event: any) => {
     event.preventDefault();
     console.log(event.target.expense.value);
@@ -24,6 +26,17 @@ export const ModalAdd = () => {
     console.log(event.target.category.value);
     console.log(event.target.color.value);
     console.log(event.target.status.value);
+    const data = {
+      name: event.target.expense.value,
+      value: event.target.value.value,
+      invoice_due_date: format(parseISO(event.target.date.value), "yyyy-MM-dd"),
+      category: event.target.category.value,
+      color: event.target.color.value,
+      column: "TO_PAY",
+      month_reference: currentMonth.value,
+      payment_status: event.target.status.value,
+    };
+    createExpenses(data)
   };
 
   return (

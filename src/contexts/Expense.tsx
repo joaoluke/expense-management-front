@@ -12,37 +12,46 @@ const ExpensesContext = createContext({} as any);
 const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [expensesToBePaid, setExpensesToBePaid] = useState<any[]>([]);
   const [expensesPaid, setExpensesPaid] = useState<any[]>([]);
-  const [totalPaid, setTotalPaid] = useState<number>(0)
-  const [totalToPay, setTotalToPay] = useState<number>(0)
+  const [totalPaid, setTotalPaid] = useState<number>(0);
+  const [totalToPay, setTotalToPay] = useState<number>(0);
 
-  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const formatDate = (date) => {
     return {
-      month: format(date, "LLLL", { locale: ptBR }), 
+      month: format(date, "LLLL", { locale: ptBR }),
       value: format(date, "L", { locale: ptBR }),
     };
   };
 
   const changeModal = (value: boolean) => {
-    setOpenModal(value)
-  }
+    setOpenModal(value);
+  };
 
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
 
   const getExpenses = async () => {
     const { value } = currentMonth;
-  
+
     const response = await API.get("expenses/", {
       params: {
         month: value,
       },
     });
-    
-    setTotalPaid(response.data.total_paid)
-    setTotalToPay(response.data.total_to_pay)
+
+    setTotalPaid(response.data.total_paid);
+    setTotalToPay(response.data.total_to_pay);
     changeExpensesToBePaid(response.data.expenses_to_pay);
     changeExpensesPaid(response.data.expenses_paid);
+  };
+
+  const createExpenses = async (data: any) => {
+    const response = await API.post<any>("expenses/create/", data);
+
+    setOpenModal(false);
+    setTotalToPay(Number(totalToPay) + Number(response.data.value))
+
+    setExpensesToBePaid([response.data, ...expensesToBePaid]);
   };
 
   const changeExpensesToBePaid = (value) => {
@@ -59,13 +68,14 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         expensesToBePaid,
         expensesPaid,
         getExpenses,
+        createExpenses,
         changeExpensesPaid,
         changeExpensesToBePaid,
         currentMonth,
         totalPaid,
         totalToPay,
         changeModal,
-        openModal
+        openModal,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Card, SideMenu } from "./components";
+import { Card, SideMenu, ButtonAdd, ModalAdd, Navbar } from "./components";
 
 import { useExpensesContext } from "./contexts/Expense";
 
@@ -47,7 +47,7 @@ const data1 = [
 ];
 
 // a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
+const reorder = (list: any, startIndex: any, endIndex: any) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -55,16 +55,9 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-  ...draggableStyle,
-});
-
 const App = () => {
-  const [items, setItems] = useState([]);
-  const [itemsFull, setItemsFull] = useState([]);
+  const [items, setItems] = useState<any>([]);
+  const [itemsFull, setItemsFull] = useState<any>([]);
 
   const {
     getExpenses,
@@ -72,6 +65,7 @@ const App = () => {
     expensesPaid,
     changeExpensesPaid,
     changeExpensesToBePaid,
+    totalPaid,
   } = useExpensesContext();
 
   console.log(expensesToBePaid, "expensesToBePaid");
@@ -82,7 +76,7 @@ const App = () => {
     setItemsFull(data1);
   }, []);
 
-  const onDragEnd = (result) => {
+  const onDragEnd = (result: any) => {
     const { destination, source } = result;
     if (!result.destination) {
       return;
@@ -114,21 +108,19 @@ const App = () => {
       complete.splice(destination.index, 0, add);
     }
 
-    // const reorderedItems = reorder(
-    //   items,
-    //   result.source.index,
-    //   result.destination.index
-    // );
     console.log(active, complete, "ACTIVE");
     changeExpensesToBePaid(active);
     changeExpensesPaid(complete);
   };
 
   return (
-    <div className="flex h-screen w-screen dark:bg-gray-900">
+    <div className="flex min-h-screen w-screen dark:bg-gray-900">
+      <ButtonAdd />
+      <ModalAdd />
+      <Navbar />
       <SideMenu />
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex ml-64 w-full justify-center">
+        <div className="flex mt-14 ml-64 w-full justify-center">
           <Droppable droppableId="TodosList">
             {(provided, snapshot) => (
               <div
@@ -136,7 +128,7 @@ const App = () => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {expensesToBePaid.map((item: any, index) => (
+                {expensesToBePaid.map((item: any, index: any) => (
                   <Draggable
                     key={item.id}
                     draggableId={item.name}
@@ -154,6 +146,7 @@ const App = () => {
                           category={item.category}
                           name={item.name}
                           value={item.value}
+                          date={item.invoice_due_date}
                         />
                       </div>
                     )}
@@ -170,7 +163,7 @@ const App = () => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {expensesPaid.map((item: any, index) => (
+                {expensesPaid.map((item: any, index: number) => (
                   <Draggable
                     key={item.id}
                     draggableId={item.name}
@@ -188,6 +181,7 @@ const App = () => {
                           category={item.category}
                           name={item.name}
                           value={item.value}
+                          date={item.invoice_due_date}
                         />
                       </div>
                     )}
@@ -204,12 +198,3 @@ const App = () => {
 };
 
 export default App;
-
-// <div className="p-5 grid grid-cols-2 gap-4 bg-gray-900 h-screen">
-//   <div className="p-5 bg-slate-800 rounded-xl">
-//     <Card />
-//   </div>
-//   <div className="p-5 bg-slate-800 rounded-xl">
-//     <Card />
-//   </div>
-// </div>
