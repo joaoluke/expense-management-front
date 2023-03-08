@@ -12,6 +12,10 @@ const ExpensesContext = createContext({} as any);
 const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [expensesToBePaid, setExpensesToBePaid] = useState<any[]>([]);
   const [expensesPaid, setExpensesPaid] = useState<any[]>([]);
+  const [totalPaid, setTotalPaid] = useState<number>(0)
+  const [totalToPay, setTotalToPay] = useState<number>(0)
+
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
   const formatDate = (date) => {
     return {
@@ -19,6 +23,10 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       value: format(date, "L", { locale: ptBR }),
     };
   };
+
+  const changeModal = (value: boolean) => {
+    setOpenModal(value)
+  }
 
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
 
@@ -30,9 +38,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         month: value,
       },
     });
-  
-    setExpensesToBePaid(response.data.expenses_to_pay);
-    setExpensesPaid(response.data.expenses_paid);
+    
+    setTotalPaid(response.data.total_paid)
+    setTotalToPay(response.data.total_to_pay)
+    changeExpensesToBePaid(response.data.expenses_to_pay);
+    changeExpensesPaid(response.data.expenses_paid);
   };
 
   const changeExpensesToBePaid = (value) => {
@@ -51,7 +61,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         getExpenses,
         changeExpensesPaid,
         changeExpensesToBePaid,
-        currentMonth
+        currentMonth,
+        totalPaid,
+        totalToPay,
+        changeModal,
+        openModal
       }}
     >
       {children}

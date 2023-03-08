@@ -1,6 +1,8 @@
+import { parseISO, format } from "date-fns";
+
 import { Badge } from "./Badge";
 
-export function Card({ name, value, category, color }) {
+export function Card({ name, value, category, color, date }) {
   return (
     <div className=" m-3 bg-white border border-slate-500 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <div
@@ -16,7 +18,7 @@ export function Card({ name, value, category, color }) {
           </h6>
         </a>
         <p className="min-w-24 mb-3 text-xs flex flex-col font-normal text-gray-700 dark:text-gray-400">
-          Vencimento: 22/22/2222
+          Vencimento: {format(parseISO(date), "dd/MM/yyyy")}
         </p>
         <Badge />
       </div>
