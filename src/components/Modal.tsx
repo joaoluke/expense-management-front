@@ -17,7 +17,9 @@ const customStyles = {
 };
 
 export const ModalAdd = () => {
-  const { changeModal, openModal, currentMonth, createExpenses } = useExpensesContext();
+  Modal.setAppElement("#root");
+  const { changeModal, colors, openModal, currentMonth, createExpenses } =
+    useExpensesContext();
   const onSubmit = (event: any) => {
     event.preventDefault();
     console.log(event.target.expense.value);
@@ -36,7 +38,7 @@ export const ModalAdd = () => {
       month_reference: currentMonth.value,
       payment_status: event.target.status.value,
     };
-    createExpenses(data)
+    createExpenses(data);
   };
 
   return (
@@ -67,9 +69,7 @@ export const ModalAdd = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  fill-rule="evenodd"
                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
                 ></path>
               </svg>
               <span className="sr-only">Close modal</span>
@@ -128,12 +128,17 @@ export const ModalAdd = () => {
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Color
                   </label>
-                  <input
-                    type="text"
+                  <select
+                    required
                     id="color"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                    required
-                  />
+                  >
+                    {colors.map((color) => (
+                      <option key={color.id} value={color.color}>
+                        {color.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">

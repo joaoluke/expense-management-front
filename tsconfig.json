@@ -3,6 +3,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "declaration": false,
+    // "module": "system",
+    // "moduleResolution": "node",
     "allowJs": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,

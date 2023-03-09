@@ -65,13 +65,14 @@ const App = () => {
     expensesPaid,
     changeExpensesPaid,
     changeExpensesToBePaid,
-    totalPaid,
+    getColor,
   } = useExpensesContext();
 
   console.log(expensesToBePaid, "expensesToBePaid");
 
   useEffect(() => {
     getExpenses();
+    getColor()
     setItems(data);
     setItemsFull(data1);
   }, []);

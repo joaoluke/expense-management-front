@@ -15,6 +15,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [totalPaid, setTotalPaid] = useState<number>(0);
   const [totalToPay, setTotalToPay] = useState<number>(0);
 
+  const [colors, setColors] = useState([]);
+
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const formatDate = (date: any) => {
@@ -45,8 +47,13 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     changeExpensesPaid(response.data.expenses_paid);
   };
 
+  const getColor = async () => {
+    const response = await API.get("colors/");
+    setColors(response.data);
+  };
+
   const createExpenses = async (data: any) => {
-    const response = await API.post<any>("expenses/create/", data);
+    const response = await API.post<any>("expenses-list/", data);
 
     setOpenModal(false);
     setTotalToPay(Number(totalToPay) + Number(response.data.value));
@@ -55,11 +62,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   };
 
   const changeExpensesToBePaid = (value) => {
-    setExpensesToBePaid(value)
+    setExpensesToBePaid(value);
   };
 
   const changeExpensesPaid = (value) => {
-    setExpensesPaid(value)
+    setExpensesPaid(value);
   };
 
   return (
@@ -76,6 +83,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         totalToPay,
         changeModal,
         openModal,
+        getColor,
+        colors,
       }}
     >
       {children}
