@@ -13,7 +13,7 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { InputAdornment, MenuItem, Select, Typography } from "@mui/material";
 
-export const ModalDelete = ({ expense }) => {
+export const ModalDelete = () => {
   const {
     changeModalDelete,
     category,

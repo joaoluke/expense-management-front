@@ -79,9 +79,6 @@ export const Modal = () => {
                 sx={{ width: "100%" }}
                 value={formData.date}
                 onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField {...params} required fullWidth />
-                )}
               />
             </Grid>
             <Grid item xs={12}>
