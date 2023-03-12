@@ -1,4 +1,10 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { API } from "../services/connection";
@@ -21,6 +27,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     message: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [expenseToDelete, setExpenseToDelete] = useState();
 
   const [category, setCategory] = useState([]);
@@ -39,9 +47,22 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
   function getDataPorMes(mes) {
     let date = new Date();
-    let mesesDoAno = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    let mesesDoAno = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
     let mesIndex = mesesDoAno.indexOf(mes);
-    
+
     if (mesIndex !== -1) {
       date.setMonth(mesIndex);
       date.setFullYear(new Date().getFullYear());
@@ -69,31 +90,32 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     setOpenModal({ ...openModal, delete: value });
   };
 
-  
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
-  
+
   const changeMonth = (value) => {
-    setCurrentMonth(formatDate(getDataPorMes(value)))
-  }
-  
+    setCurrentMonth(formatDate(getDataPorMes(value)));
+  };
+
   const getExpenses = async () => {
+    setLoading(true)
     const { value } = currentMonth;
-    
+
     const response = await API.get("expenses/", {
       params: {
         month: value,
       },
     });
 
-    setTotalPaid(response.data.total_paid  || 0);
-    setTotalToPay(response.data.total_to_pay  || 0);
+    setTotalPaid(response.data.total_paid || 0);
+    setTotalToPay(response.data.total_to_pay || 0);
     changeExpensesToBePaid(response.data.expenses_to_pay);
     changeExpensesPaid(response.data.expenses_paid);
+    setLoading(false)
   };
-  
+
   useEffect(() => {
-    getExpenses()
-  },[currentMonth])
+    getExpenses();
+  }, [currentMonth]);
 
   const deleteExpense = async (expense) => {
     await API.delete<any>(`expenses-list/${expense.id}/`);
@@ -125,9 +147,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
     changeModalCreate(false);
 
-
     if (response.data.month_reference !== new Date().getMonth() + 1) {
-      return
+      return;
     }
 
     if (data.column === "PAID") {
@@ -177,7 +198,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         toastIsOpen,
         getExpenses,
         deleteExpense,
-        createExpenses,
+        createExpenses,loading,
         closeToast,
         changeMonth,
         changeExpensesPaid,

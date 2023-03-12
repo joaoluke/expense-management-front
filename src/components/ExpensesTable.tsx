@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Skeleton from "@mui/material/Skeleton";
 
 import {
   Avatar,
@@ -41,7 +42,7 @@ function preventDefault(event: React.MouseEvent) {
 export function ExpensesTable({ data, title }) {
   console.log(data);
 
-  const { changeModalDelete } = useExpensesContext();
+  const { changeModalDelete, loading } = useExpensesContext();
 
   const rows = data.map((expense) =>
     createData(
@@ -63,77 +64,91 @@ export function ExpensesTable({ data, title }) {
   return (
     <React.Fragment>
       {/* <Title>Recent Orders</Title> */}
-      <Toolbar
-        sx={{
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-        }}
-      >
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {title}
-        </Typography>
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      </Toolbar>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Despesa</TableCell>
-            <TableCell>Data de Vencimento</TableCell>
-            <TableCell>Categoria</TableCell>
-            <TableCell align="right">Valor R$</TableCell>
-            <TableCell align="right" />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.length ? (
-            rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>
-                  {isDateBeforeToday(new Date(row.invoiceDueDate)) ? (
-                    <b style={{ color: "#d3382f" }}>
-                      {format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}
-                    </b>
-                  ) : (
-                    <>{format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}</>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={row.category}
-                    sx={{ bgcolor: row.color, color: "white" }}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell align="right">{row.value}</TableCell>
-                <TableCell align="right" sx={{ width: "112px" }}>
-                  <IconButton>
-                    <EditIcon color="primary" />
-                  </IconButton>
-                  <IconButton onClick={() => changeModalDelete(true, row)}>
-                    <DeleteIcon color="primary" />
-                  </IconButton>
-                </TableCell>
+      {!loading ? (
+        <>
+          <Toolbar
+            sx={{
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+          >
+            <Typography
+              sx={{ flex: "1 1 100%" }}
+              color="inherit"
+              variant="subtitle1"
+              component="div"
+            >
+              {title}
+            </Typography>
+            <Tooltip title="Filter list">
+              <IconButton>
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+          </Toolbar>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Despesa</TableCell>
+                <TableCell>Data de Vencimento</TableCell>
+                <TableCell>Categoria</TableCell>
+                <TableCell align="right">Valor R$</TableCell>
+                <TableCell align="right" />
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell style={{ padding: 40 }} align="center" colSpan={6}>
-                Sem despesas cadastradas
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            </TableHead>
+            <TableBody>
+              {rows.length ? (
+                rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>
+                      {isDateBeforeToday(new Date(row.invoiceDueDate)) ? (
+                        <b style={{ color: "#d3382f" }}>
+                          {format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}
+                        </b>
+                      ) : (
+                        <>
+                          {format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}
+                        </>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={row.category}
+                        sx={{ bgcolor: row.color, color: "white" }}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">{row.value}</TableCell>
+                    <TableCell align="right" sx={{ width: "112px" }}>
+                      <IconButton>
+                        <EditIcon color="primary" />
+                      </IconButton>
+                      <IconButton onClick={() => changeModalDelete(true, row)}>
+                        <DeleteIcon color="primary" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell style={{ padding: 40 }} align="center" colSpan={6}>
+                    Sem despesas cadastradas
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </>
+      ) : (
+        <div>
+          <Skeleton animation="wave" style={{ height: 60 }} />
+          <Skeleton animation="wave" style={{ height: 60 }} />
+          <Skeleton animation="wave" style={{ height: 60 }} />
+          <Skeleton animation="wave" style={{ height: 60 }} />
+          <Skeleton animation="wave" style={{ height: 60 }} />
+        </div>
+      )}
     </React.Fragment>
   );
 }
