@@ -28,9 +28,9 @@ function createData(
   value: number,
   color: string,
   id: number,
-  expense
+  column: string
 ) {
-  return { name, invoiceDueDate, category, value, color, id, expense };
+  return { name, invoiceDueDate, category, value, color, id, column };
 }
 
 function preventDefault(event: React.MouseEvent) {
@@ -40,7 +40,7 @@ function preventDefault(event: React.MouseEvent) {
 export function ExpensesTable({ data, title }) {
   console.log(data);
 
-  const {changeModalDelete} = useExpensesContext()
+  const { changeModalDelete } = useExpensesContext();
 
   const rows = data.map((expense) =>
     createData(

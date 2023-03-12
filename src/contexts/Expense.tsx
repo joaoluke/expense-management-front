@@ -80,6 +80,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       message: "Despesa excluida com sucesso",
     });
 
+    console.log(
+      expense,
+      expensesPaid.filter((item) => item.id !== expense.id),
+      "expensesPaid.filter((item) => item.id !== expense.id)"
+    );
     if (expense.column === "PAID") {
       setTotalPaid(Number(totalPaid) - Number(expense.value));
       setExpensesPaid(expensesPaid.filter((item) => item.id !== expense.id));
