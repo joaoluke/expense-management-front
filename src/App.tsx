@@ -14,16 +14,9 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
-import MenuIcon from "@mui/icons-material/Menu";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import SendIcon from "@mui/icons-material/Send";
 import AddIcon from "@mui/icons-material/Add";
 
 import LayersIcon from "@mui/icons-material/Layers";
@@ -38,73 +31,73 @@ const mainListItems = (month, click) => (
   <>
     <ListItemButton
       selected={month === "janeiro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Janeiro" />
     </ListItemButton>
     <ListItemButton
       selected={month === "fevereiro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Fevereiro" />
     </ListItemButton>
     <ListItemButton
       selected={month === "março"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Março" />
     </ListItemButton>
     <ListItemButton
       selected={month === "abril"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Abril" />
     </ListItemButton>
     <ListItemButton
       selected={month === "maio"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Maio" />
     </ListItemButton>
     <ListItemButton
       selected={month === "junho"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Junho" />
     </ListItemButton>
     <ListItemButton
       selected={month === "julho"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Julho" />
     </ListItemButton>
     <ListItemButton
       selected={month === "agosto"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Agosto" />
     </ListItemButton>
     <ListItemButton
       selected={month === "setembro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Setembro" />
     </ListItemButton>
     <ListItemButton
       selected={month === "outubro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Outubro" />
     </ListItemButton>
     <ListItemButton
       selected={month === "novembro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Novembro" />
     </ListItemButton>
     <ListItemButton
       selected={month === "dezembro"}
-      onClick={(e) => click(e.target.innerText)}
+      onClick={(e: any) => click(e.target.innerText)}
     >
       <ListItemText primary="Dezembro" />
     </ListItemButton>
