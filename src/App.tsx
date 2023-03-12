@@ -32,7 +32,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 // import { mainListItems, secondaryListItems } from "./listItems";
 
 import { useExpensesContext } from "./contexts/Expense";
-import { Button } from "@mui/material";
+import { Alert, Button, Snackbar } from "@mui/material";
 
 import { ExpensesTable, Modal, ModalDelete } from "./components";
 const mainListItems = (
@@ -156,6 +156,8 @@ const App = () => {
     expensesToBePaid,
     totalToPay,
     totalPaid,
+    closeToast,
+    toastIsOpen,
   } = useExpensesContext();
   const [open, setOpen] = React.useState(true);
 
@@ -164,8 +166,22 @@ const App = () => {
     getCategory();
   }, []);
 
+  const vertical = "top";
+  const horizontal = "right";
+
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    closeToast();
   };
 
   return (
@@ -173,6 +189,20 @@ const App = () => {
       <Box sx={{ display: "flex" }}>
         {openModal.create && <Modal />}
         {openModal.delete && <ModalDelete />}
+        <Snackbar
+          open={toastIsOpen.open}
+          anchorOrigin={{ vertical, horizontal }}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            {toastIsOpen.message}
+          </Alert>
+        </Snackbar>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
           <Toolbar

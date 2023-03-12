@@ -26,7 +26,7 @@ export const ModalDelete = () => {
   console.log(expenseToDelete, "<_______")
 
   const deleteCurrentExpense = () => {
-    deleteExpense(expenseToDelete.id);
+    deleteExpense(expenseToDelete);
   };
 
   return (

@@ -16,7 +16,12 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [totalPaid, setTotalPaid] = useState<number>(0);
   const [totalToPay, setTotalToPay] = useState<number>(0);
 
-  const [expenseToDelete, setExpenseToDelete] = useState()
+  const [toastIsOpen, setToastIsOpen] = useState({
+    open: false,
+    message: "",
+  });
+
+  const [expenseToDelete, setExpenseToDelete] = useState();
 
   const [category, setCategory] = useState([]);
 
@@ -24,6 +29,13 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     delete: false,
     create: false,
   });
+
+  const closeToast = () => {
+    setToastIsOpen({
+      open: false,
+      message: "",
+    });
+  };
 
   const formatDate = (date: any) => {
     return {
@@ -38,7 +50,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
   const changeModalDelete = (value: boolean, expense = null) => {
     if (expense) {
-      setExpenseToDelete(expense)
+      setExpenseToDelete(expense);
     }
     setOpenModal({ ...openModal, delete: value });
   };
@@ -60,21 +72,44 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     changeExpensesPaid(response.data.expenses_paid);
   };
 
-  
-  const deleteExpense = async (id) => {
-    await API.delete<any>(`expenses-list/${id}/`);
+  const deleteExpense = async (expense) => {
+    await API.delete<any>(`expenses-list/${expense.id}/`);
+
+    setToastIsOpen({
+      open: true,
+      message: "Despesa excluida com sucesso",
+    });
+
+    if (expense.column === "PAID") {
+      setTotalPaid(Number(totalPaid) - Number(expense.value));
+      setExpensesPaid(expensesPaid.filter((item) => item.id !== expense.id));
+    } else {
+      setTotalToPay(Number(totalToPay) - Number(expense.value));
+      setExpensesToBePaid(
+        expensesToBePaid.filter((item) => item.id !== expense.id)
+      );
+    }
     changeModalDelete(false);
-  }
-  
+  };
+
   const createExpenses = async (data: any) => {
     const response = await API.post<any>("expenses-list/", data);
-    
-    changeModalCreate(false);
-    setTotalToPay(Number(totalToPay) + Number(response.data.value));
 
-    setExpensesToBePaid([response.data, ...expensesToBePaid]);
+    setToastIsOpen({
+      open: true,
+      message: "Despesa criada com sucesso",
+    });
+
+    changeModalCreate(false);
+    if (data.column === "PAID") {
+      setTotalPaid(Number(totalPaid) + Number(data.value));
+      setExpensesPaid([response.data, ...expensesPaid]);
+    } else {
+      setTotalToPay(Number(totalToPay) + Number(data.value));
+      setExpensesToBePaid([response.data, ...expensesToBePaid]);
+    }
   };
-  
+
   const getCategory = async () => {
     const response = await API.get("category/");
     setCategory(response.data);
@@ -97,7 +132,6 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     );
   };
 
-
   const changeExpensesToBePaid = (value) => {
     setExpensesToBePaid(value);
   };
@@ -111,9 +145,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       value={{
         expensesToBePaid,
         expensesPaid,
+        toastIsOpen,
         getExpenses,
         deleteExpense,
         createExpenses,
+        closeToast,
         changeExpensesPaid,
         changeExpensesToBePaid,
         currentMonth,

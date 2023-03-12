@@ -14,8 +14,13 @@ import TextField from "@mui/material/TextField";
 import { InputAdornment, MenuItem, Select } from "@mui/material";
 
 export const Modal = () => {
-  const { changeModal, category, openModal, currentMonth, createExpenses } =
-    useExpensesContext();
+  const {
+    changeModalCreate,
+    category,
+    openModal,
+    currentMonth,
+    createExpenses,
+  } = useExpensesContext();
 
   const [formData, setFormData] = useState({
     expense: "",
@@ -130,7 +135,12 @@ export const Modal = () => {
               <Button sx={{ mr: 2 }} type="submit" variant="contained">
                 Criar
               </Button>
-              <Button variant="outlined">Cancelar</Button>
+              <Button
+                onClick={() => changeModalCreate(false)}
+                variant="outlined"
+              >
+                Cancelar
+              </Button>
             </Grid>
           </Grid>
         </form>

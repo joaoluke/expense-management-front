@@ -27,9 +27,10 @@ function createData(
   category: string,
   value: number,
   color: string,
-  id: number
+  id: number,
+  expense
 ) {
-  return { name, invoiceDueDate, category, value, color, id };
+  return { name, invoiceDueDate, category, value, color, id, expense };
 }
 
 function preventDefault(event: React.MouseEvent) {
@@ -48,7 +49,8 @@ export function ExpensesTable({ data, title }) {
       expense.category,
       expense.value,
       expense.color,
-      expense.id
+      expense.id,
+      expense.column
     )
   );
 
