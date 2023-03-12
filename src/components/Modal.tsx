@@ -18,7 +18,6 @@ export const Modal = () => {
     changeModalCreate,
     category,
     openModal,
-    currentMonth,
     createExpenses,
   } = useExpensesContext();
 
@@ -28,7 +27,10 @@ export const Modal = () => {
     date: null,
     category: "",
     status: "",
+    month: null
   });
+
+  const monthCurrent = new Date().getMonth() + 1;
 
   const handleChange = (event) => {
     console.log(event.target, event.target.value);
@@ -38,6 +40,20 @@ export const Modal = () => {
   const handleDateChange = (date) => {
     setFormData({ ...formData, date });
   };
+
+  function generateMonthList() {
+    let date = new Date();
+    let monthsOfYear = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    let currentMonthGenerate = date.getMonth();
+    
+    return monthsOfYear.map((month, index) => {
+      return { month: month, value: String(index + 1 )};
+    });
+  }
+
+  console.log(formData.month,monthCurrent, Number(formData.month) < Number(monthCurrent) , "<<<<<<<")
+  
+  console.log(generateMonthList());
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -55,12 +71,14 @@ export const Modal = () => {
       invoice_due_date: format(new Date(formData.date), "yyyy-MM-dd"),
       category: categoryAndColor.name,
       color: categoryAndColor.color,
-      column: formData.status,
-      month_reference: currentMonth.value,
+      column: formData.status || Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY",
+      month_reference: formData.month,
       payment_status: "PENDING",
     };
     createExpenses(data);
   };
+
+  
 
   return (
     <Dialog open={true} onClose={() => null} fullWidth>
@@ -119,8 +137,24 @@ export const Modal = () => {
             </Grid>
             <Grid item xs={6}>
               <TextField
+                value={formData.month}
+                onChange={handleChange}
+                name="month"
+                label="Mes de Referencia"
+                required
+                select
+                fullWidth
+              >
+                {generateMonthList().map((item)=>(
+                  <MenuItem value={item.value}>{item.month}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 value={formData.status}
                 onChange={handleChange}
+                disabled={Number(formData.month) !== Number(monthCurrent)}
                 name="status"
                 label="Status"
                 required

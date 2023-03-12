@@ -1,6 +1,5 @@
 import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -29,51 +28,87 @@ import AddIcon from "@mui/icons-material/Add";
 
 import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-// import { mainListItems, secondaryListItems } from "./listItems";
 
 import { useExpensesContext } from "./contexts/Expense";
 import { Alert, Button, Snackbar } from "@mui/material";
 
 import { ExpensesTable, Modal, ModalDelete } from "./components";
-const mainListItems = (
-  <React.Fragment>
-    <ListItemButton>
+
+const mainListItems = (month, click) => (
+  <>
+    <ListItemButton
+      selected={month === "janeiro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Janeiro" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "fevereiro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Fevereiro" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "março"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Março" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "abril"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Abril" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "maio"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Maio" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "junho"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Junho" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "julho"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Julho" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "agosto"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Agosto" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "setembro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Setembro" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "outubro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Outubro" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "novembro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Novembro" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton
+      selected={month === "dezembro"}
+      onClick={(e) => click(e.target.innerText)}
+    >
       <ListItemText primary="Dezembro" />
     </ListItemButton>
-  </React.Fragment>
+  </>
 );
 
 function Copyright(props: any) {
@@ -86,7 +121,7 @@ function Copyright(props: any) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        João Lucas
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -158,8 +193,12 @@ const App = () => {
     totalPaid,
     closeToast,
     toastIsOpen,
+    currentMonth,
+    changeMonth,
   } = useExpensesContext();
   const [open, setOpen] = React.useState(true);
+
+  console.log(currentMonth, "currentMonth");
 
   React.useEffect(() => {
     getExpenses();
@@ -203,17 +242,17 @@ const App = () => {
             {toastIsOpen.message}
           </Alert>
         </Snackbar>
-        <CssBaseline />
+
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
             }}
           >
-            <Chip label={`A pagar: R$ ${totalToPay}`} color="success" />
+            <Chip label={`A pagar: R$ ${totalToPay}`} color="error" />
             <Chip
               label={`Pago: R$ ${totalPaid}`}
-              color="error"
+              color="success"
               sx={{ ml: 2 }}
             />
           </Toolbar>
@@ -234,7 +273,7 @@ const App = () => {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            {mainListItems(currentMonth.month, changeMonth)}
             <Divider sx={{ my: 1 }} />
             <ListItemButton onClick={() => changeModalCreate(true)}>
               <Button variant="contained" endIcon={<AddIcon />}>
@@ -263,16 +302,24 @@ const App = () => {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <ExpensesTable title="A PAGAR" data={expensesToBePaid} />
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <ExpensesTable title="PAGO" data={expensesPaid} />
-                </Paper>
-              </Grid>
+              {currentMonth.value >= new Date().getMonth() + 1 && (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <ExpensesTable title="A PAGAR" data={expensesToBePaid} />
+                  </Paper>
+                </Grid>
+              )}
+              {currentMonth.value <= new Date().getMonth() + 1 && (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <ExpensesTable title="PAGO" data={expensesPaid} />
+                  </Paper>
+                </Grid>
+              )}
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

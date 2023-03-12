@@ -1,4 +1,5 @@
 import * as React from "react";
+import { format, parseISO } from "date-fns";
 import Link from "@mui/material/Link";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -54,6 +55,11 @@ export function ExpensesTable({ data, title }) {
     )
   );
 
+  function isDateBeforeToday(date) {
+    const currentDate = new Date();
+    return date.getTime() < currentDate.getTime();
+  }
+
   return (
     <React.Fragment>
       {/* <Title>Recent Orders</Title> */}
@@ -88,28 +94,44 @@ export function ExpensesTable({ data, title }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.invoiceDueDate}</TableCell>
-              <TableCell>
-                <Chip
-                  label={row.category}
-                  sx={{ bgcolor: row.color, color: "white" }}
-                  size="small"
-                />
-              </TableCell>
-              <TableCell align="right">{row.value}</TableCell>
-              <TableCell align="right" sx={{ width: "112px" }}>
-                <IconButton>
-                  <EditIcon color="primary" />
-                </IconButton>
-                <IconButton onClick={() => changeModalDelete(true, row)}>
-                  <DeleteIcon color="primary" />
-                </IconButton>
+          {rows.length ? (
+            rows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>
+                  {isDateBeforeToday(new Date(row.invoiceDueDate)) ? (
+                    <b style={{ color: "#d3382f" }}>
+                      {format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}
+                    </b>
+                  ) : (
+                    <>{format(new Date(row.invoiceDueDate), "dd/MM/yyyy")}</>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={row.category}
+                    sx={{ bgcolor: row.color, color: "white" }}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell align="right">{row.value}</TableCell>
+                <TableCell align="right" sx={{ width: "112px" }}>
+                  <IconButton>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                  <IconButton onClick={() => changeModalDelete(true, row)}>
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell style={{ padding: 40 }} align="center" colSpan={6}>
+                Sem despesas cadastradas
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </React.Fragment>
