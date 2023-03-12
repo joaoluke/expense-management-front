@@ -6,5 +6,5 @@ const apiUrl =
     : import.meta.env.VITE_PROD_API_URL;
 
 export const API = axios.create({
-  baseURL: apiUrl,
+  baseURL: apiUrl
 });

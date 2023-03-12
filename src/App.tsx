@@ -1,200 +1,254 @@
-import { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Card, SideMenu, ButtonAdd, ModalAdd, Navbar } from "./components";
+import * as React from "react";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import MuiDrawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Link from "@mui/material/Link";
+import Chip from "@mui/material/Chip";
+import MenuIcon from "@mui/icons-material/Menu";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SendIcon from "@mui/icons-material/Send";
+import AddIcon from "@mui/icons-material/Add";
+
+import LayersIcon from "@mui/icons-material/Layers";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+// import { mainListItems, secondaryListItems } from "./listItems";
 
 import { useExpensesContext } from "./contexts/Expense";
+import { Button } from "@mui/material";
 
-const data = [
-  {
-    id: "item-1",
-    content: "Item-1",
-  },
-  {
-    id: "item-2",
-    content: "Item-2",
-  },
-  {
-    id: "item-3",
-    content: "Item-3",
-  },
-  {
-    id: "item-4",
-    content: "Item-4",
-  },
-];
+import { ExpensesTable, Modal, ModalDelete } from "./components";
+const mainListItems = (
+  <React.Fragment>
+    <ListItemButton>
+      <ListItemText primary="Janeiro" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Fevereiro" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Março" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Abril" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Maio" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Junho" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Julho" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Agosto" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Setembro" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Outubro" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Novembro" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemText primary="Dezembro" />
+    </ListItemButton>
+  </React.Fragment>
+);
 
-const data1 = [
-  {
-    id: "item-5",
-    content: "Item-5",
-  },
-  {
-    id: "item-6",
-    content: "Item-6",
-  },
-  {
-    id: "item-7",
-    content: "Item-7",
-  },
-  {
-    id: "item-8",
-    content: "Item-8",
-  },
-  {
-    id: "item-9",
-    content: "Item-9",
-  },
-];
+function Copyright(props: any) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 
-// a little function to help us with reordering the result
-const reorder = (list: any, startIndex: any, endIndex: any) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
+const drawerWidth: number = 240;
 
-  return result;
-};
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})<AppBarProps>(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  "& .MuiDrawer-paper": {
+    position: "relative",
+    whiteSpace: "nowrap",
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    boxSizing: "border-box",
+    ...(!open && {
+      overflowX: "hidden",
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      width: theme.spacing(7),
+      [theme.breakpoints.up("sm")]: {
+        width: theme.spacing(9),
+      },
+    }),
+  },
+}));
+
+const mdTheme = createTheme();
 
 const App = () => {
-  const [items, setItems] = useState<any>([]);
-  const [itemsFull, setItemsFull] = useState<any>([]);
-
   const {
+    openModal,
+    changeModalCreate,
     getExpenses,
-    expensesToBePaid,
+    getCategory,
     expensesPaid,
-    changeExpensesPaid,
-    changeExpensesToBePaid,
-    getColor,
+    expensesToBePaid,
+    totalToPay,
+    totalPaid,
   } = useExpensesContext();
+  const [open, setOpen] = React.useState(true);
 
-  console.log(expensesToBePaid, "expensesToBePaid");
-
-  useEffect(() => {
+  React.useEffect(() => {
     getExpenses();
-    getColor()
-    setItems(data);
-    setItemsFull(data1);
+    getCategory();
   }, []);
 
-  const onDragEnd = (result: any) => {
-    const { destination, source } = result;
-    if (!result.destination) {
-      return;
-    }
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    let add;
-    let active = expensesToBePaid;
-    let complete = expensesPaid;
-    // Source Logic
-    if (source.droppableId === "TodosList") {
-      add = active[source.index];
-      active.splice(source.index, 1);
-    } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
-    }
-
-    // Destination Logic
-    if (destination.droppableId === "TodosList") {
-      active.splice(destination.index, 0, add);
-    } else {
-      complete.splice(destination.index, 0, add);
-    }
-
-    console.log(active, complete, "ACTIVE");
-    changeExpensesToBePaid(active);
-    changeExpensesPaid(complete);
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
   return (
-    <div className="flex min-h-screen w-screen dark:bg-gray-900">
-      <ButtonAdd />
-      <ModalAdd />
-      <Navbar />
-      <SideMenu />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex mt-14 ml-64 w-full justify-center">
-          <Droppable droppableId="TodosList">
-            {(provided, snapshot) => (
-              <div
-                className="w-64 bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {expensesToBePaid.map((item: any, index: any) => (
-                  <Draggable
-                    key={item.id}
-                    draggableId={item.name}
-                    index={index}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        className="card"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Card
-                          color={item.color}
-                          category={item.category}
-                          name={item.name}
-                          value={item.value}
-                          date={item.invoice_due_date}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-          <Droppable droppableId="TodosFullList">
-            {(provided, snapshot) => (
-              <div
-                className="w-64 bg-slate-200 rounded-lg p-3 m-5 mr-5  dark:bg-gray-700"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {expensesPaid.map((item: any, index: number) => (
-                  <Draggable
-                    key={item.id}
-                    draggableId={item.name}
-                    index={index}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        className="card"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Card
-                          color={item.color}
-                          category={item.category}
-                          name={item.name}
-                          value={item.value}
-                          date={item.invoice_due_date}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </div>
-      </DragDropContext>
-    </div>
+    <ThemeProvider theme={mdTheme}>
+      <Box sx={{ display: "flex" }}>
+        {openModal.create && <Modal />}
+        {openModal.delete && <ModalDelete />}
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Toolbar
+            sx={{
+              pr: "24px", // keep right padding when drawer closed
+            }}
+          >
+            <Chip label={`A pagar: R$ ${totalToPay}`} color="success" />
+            <Chip
+              label={`Pago: R$ ${totalPaid}`}
+              color="error"
+              sx={{ ml: 2 }}
+            />
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={true}>
+          <Toolbar
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              px: [1],
+            }}
+          >
+            <IconButton onClick={toggleDrawer}>
+              <BarChartIcon />
+            </IconButton>
+            <Typography>Despesas</Typography>
+          </Toolbar>
+          <Divider />
+          <List component="nav">
+            {mainListItems}
+            <Divider sx={{ my: 1 }} />
+            <ListItemButton onClick={() => changeModalCreate(true)}>
+              <Button variant="contained" endIcon={<AddIcon />}>
+                Despesa
+              </Button>
+            </ListItemButton>
+            <ListItemButton>
+              <Button variant="contained" endIcon={<AddIcon />}>
+                Categoria
+              </Button>
+            </ListItemButton>
+          </List>
+        </Drawer>
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+          }}
+        >
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <ExpensesTable title="A PAGAR" data={expensesToBePaid} />
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <ExpensesTable title="PAGO" data={expensesPaid} />
+                </Paper>
+              </Grid>
+            </Grid>
+            <Copyright sx={{ pt: 4 }} />
+          </Container>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };
 

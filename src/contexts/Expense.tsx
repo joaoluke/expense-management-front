@@ -2,6 +2,7 @@ import { createContext, useContext, ReactNode, useState } from "react";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { API } from "../services/connection";
+import { getCookie } from "../functions/GET_COOCKIE";
 
 type PropsExpensesProviders = {
   children: ReactNode;
@@ -15,9 +16,14 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [totalPaid, setTotalPaid] = useState<number>(0);
   const [totalToPay, setTotalToPay] = useState<number>(0);
 
-  const [colors, setColors] = useState([]);
+  const [expenseToDelete, setExpenseToDelete] = useState()
 
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [category, setCategory] = useState([]);
+
+  const [openModal, setOpenModal] = useState<any>({
+    delete: false,
+    create: false,
+  });
 
   const formatDate = (date: any) => {
     return {
@@ -26,8 +32,15 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     };
   };
 
-  const changeModal = (value: boolean) => {
-    setOpenModal(value);
+  const changeModalCreate = (value: boolean) => {
+    setOpenModal({ ...openModal, create: value });
+  };
+
+  const changeModalDelete = (value: boolean, expense = null) => {
+    if (expense) {
+      setExpenseToDelete(expense)
+    }
+    setOpenModal({ ...openModal, delete: value });
   };
 
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
@@ -47,19 +60,43 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     changeExpensesPaid(response.data.expenses_paid);
   };
 
-  const getColor = async () => {
-    const response = await API.get("colors/");
-    setColors(response.data);
-  };
-
+  
+  const deleteExpense = async (id) => {
+    await API.delete<any>(`expenses-list/${id}/`);
+    changeModalDelete(false);
+  }
+  
   const createExpenses = async (data: any) => {
     const response = await API.post<any>("expenses-list/", data);
-
-    setOpenModal(false);
+    
+    changeModalCreate(false);
     setTotalToPay(Number(totalToPay) + Number(response.data.value));
 
     setExpensesToBePaid([response.data, ...expensesToBePaid]);
   };
+  
+  const getCategory = async () => {
+    const response = await API.get("category/");
+    setCategory(response.data);
+  };
+
+  const csrftoken = getCookie("csrftoken");
+
+  const login = async () => {
+    await API.post(
+      "login/",
+      {
+        username: "admin",
+        password: "1234",
+      },
+      {
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+      }
+    );
+  };
+
 
   const changeExpensesToBePaid = (value) => {
     setExpensesToBePaid(value);
@@ -75,16 +112,20 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         expensesToBePaid,
         expensesPaid,
         getExpenses,
+        deleteExpense,
         createExpenses,
         changeExpensesPaid,
         changeExpensesToBePaid,
         currentMonth,
         totalPaid,
+        changeModalDelete,
         totalToPay,
-        changeModal,
+        login,
+        expenseToDelete,
+        changeModalCreate,
         openModal,
-        getColor,
-        colors,
+        getCategory,
+        category,
       }}
     >
       {children}
