@@ -9,6 +9,11 @@ import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { API } from "../services/connection";
 import { getCookie } from "../functions/GET_COOCKIE";
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 type PropsExpensesProviders = {
   children: ReactNode;
@@ -97,7 +102,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   };
 
   const getExpenses = async () => {
-    setLoading(true)
+    setLoading(true);
     const { value } = currentMonth;
 
     const response = await API.get("expenses/", {
@@ -110,7 +115,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     setTotalToPay(response.data.total_to_pay || 0);
     changeExpensesToBePaid(response.data.expenses_to_pay);
     changeExpensesPaid(response.data.expenses_paid);
-    setLoading(false)
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -165,21 +170,24 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     setCategory(response.data);
   };
 
-  const csrftoken = getCookie("csrftoken");
+  const data = {
+    username: "admin",
+    password: "1234",
+  };
+
+  const csrfToken = Cookies.get('csrftoken');
 
   const login = async () => {
-    await API.post(
-      "login/",
-      {
-        username: "admin",
-        password: "1234",
-      },
-      {
-        headers: {
-          "X-CSRFToken": csrftoken,
-        },
-      }
-    );
+    await axios.post('http://localhost:8000/login/', {
+      username: 'admin',
+      password: '1234',
+    })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error.response.data);
+      });
   };
 
   const changeExpensesToBePaid = (value) => {
@@ -198,7 +206,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         toastIsOpen,
         getExpenses,
         deleteExpense,
-        createExpenses,loading,
+        createExpenses,
+        loading,
         closeToast,
         changeMonth,
         changeExpensesPaid,

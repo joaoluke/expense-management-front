@@ -1,9 +1,9 @@
-export const getCookie = (name) => {
-  var cookieValue = null;
+export function getCookie(name) {
+  let cookieValue = null;
   if (document.cookie && document.cookie !== "") {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim();
+    let cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
       if (cookie.substring(0, name.length + 1) === name + "=") {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
         break;
@@ -11,4 +11,4 @@ export const getCookie = (name) => {
     }
   }
   return cookieValue;
-};
+}

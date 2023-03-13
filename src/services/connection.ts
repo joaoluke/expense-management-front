@@ -6,5 +6,9 @@ const apiUrl =
     : import.meta.env.VITE_PROD_API_URL;
 
 export const API = axios.create({
-  baseURL: apiUrl
+  baseURL: apiUrl,
 });
+
+export const defaultsHeadersAxios = (token: string) => {
+  API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+};
