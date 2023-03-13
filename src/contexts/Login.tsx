@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { API, defaultsHeadersAxios } from "../services/connection";
+import API, { defaultsHeadersAxios } from "../services/connection";
 
 type PropsExpensesProviders = {
   children: ReactNode;

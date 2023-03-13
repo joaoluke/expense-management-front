@@ -7,13 +7,13 @@ import {
 } from "react";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
-import { API } from "../services/connection";
+import API from "../services/connection";
 import { getCookie } from "../functions/GET_COOCKIE";
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import axios from "axios";
+import Cookies from "js-cookie";
 
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 type PropsExpensesProviders = {
   children: ReactNode;
@@ -98,16 +98,17 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
 
   const changeMonth = (value) => {
+    getExpenses(formatDate(getDataPorMes(value)));
     setCurrentMonth(formatDate(getDataPorMes(value)));
   };
 
-  const getExpenses = async () => {
+  const getExpenses = async (value = currentMonth) => {
     setLoading(true);
-    const { value } = currentMonth;
+    // const { value } = currentMonth;
 
     const response = await API.get("expenses/", {
       params: {
-        month: value,
+        month: value.value,
       },
     });
 
@@ -118,9 +119,9 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    getExpenses();
-  }, [currentMonth]);
+  // useEffect(() => {
+  //   getExpenses();
+  // }, [currentMonth]);
 
   const deleteExpense = async (expense) => {
     await API.delete<any>(`expenses-list/${expense.id}/`);
@@ -175,17 +176,18 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     password: "1234",
   };
 
-  const csrfToken = Cookies.get('csrftoken');
+  const csrfToken = Cookies.get("csrftoken");
 
   const login = async () => {
-    await axios.post('http://localhost:8000/login/', {
-      username: 'admin',
-      password: '1234',
-    })
-      .then(response => {
+    await axios
+      .post("http://localhost:8000/login/", {
+        username: "admin",
+        password: "1234",
+      })
+      .then((response) => {
         console.log(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error.response.data);
       });
   };

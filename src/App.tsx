@@ -1,16 +1,22 @@
 import { Route, Routes, Navigate } from "react-router-dom";
+
+import { defaultsHeadersAxios } from "./services/connection";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
 function App() {
   function checkAuthentication() {
     const token = localStorage.getItem("token");
-    return token !== null;
+    return { haveToken: token !== null, token };
   }
 
   function PrivateRoute({ children }) {
     const auth = checkAuthentication();
-    return auth ? <>{children}</> : <Navigate to="/login" />;
+    if (auth.haveToken) {
+      defaultsHeadersAxios(auth.token);
+      return <>{children}</>;
+    }
+    return <Navigate to="/login" />;
   }
 
   return (

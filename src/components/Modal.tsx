@@ -61,7 +61,9 @@ export const Modal = () => {
       new Date(formData.date),
       format(new Date(formData.date), "yyyy-MM-dd")
     );
-    console.log("Input 1:", formData);
+    
+    console.log("Input 1:", formData.status);
+
     const categoryAndColor = category.find(
       (item) => item.name === formData.category
     );
@@ -71,7 +73,7 @@ export const Modal = () => {
       invoice_due_date: format(new Date(formData.date), "yyyy-MM-dd"),
       category: categoryAndColor.name,
       color: categoryAndColor.color,
-      column: formData.status || Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY",
+      column: formData.status || (Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY"),
       month_reference: formData.month,
       payment_status: "PENDING",
     };
