@@ -14,7 +14,6 @@ import { useExpensesContext } from "../contexts/Expense";
 
 export function SideMenu() {
   const { currentMonth } = useExpensesContext();
-  console.log(currentMonth, "currentMonth");
 
   return (
     <aside

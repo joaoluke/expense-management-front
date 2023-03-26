@@ -25,7 +25,6 @@ const LoginContextProvider = ({ children }: PropsExpensesProviders) => {
       password: password,
     })
       .then((response) => {
-        console.log(response.data);
         authentication(response.data.access);
       })
       .catch((error) => {

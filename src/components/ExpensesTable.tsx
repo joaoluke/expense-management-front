@@ -40,9 +40,8 @@ function preventDefault(event: React.MouseEvent) {
 }
 
 export function ExpensesTable({ data, title }) {
-  console.log(data);
 
-  const { changeModalDelete, loading } = useExpensesContext();
+  const { changeModalDelete, loading, editExpense } = useExpensesContext();
 
   const rows = data.map((expense) =>
     createData(
@@ -122,7 +121,7 @@ export function ExpensesTable({ data, title }) {
                     <TableCell align="right">{row.value}</TableCell>
                     <TableCell align="right" sx={{ width: "112px" }}>
                       <IconButton>
-                        <EditIcon color="primary" />
+                        <EditIcon color="primary" onClick={() => editExpense(row)} />
                       </IconButton>
                       <IconButton onClick={() => changeModalDelete(true, row)}>
                         <DeleteIcon color="primary" />

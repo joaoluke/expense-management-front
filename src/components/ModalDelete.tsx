@@ -23,8 +23,6 @@ export const ModalDelete = () => {
     expenseToDelete,
   } = useExpensesContext();
 
-  console.log(expenseToDelete, "<_______")
-
   const deleteCurrentExpense = () => {
     deleteExpense(expenseToDelete);
   };

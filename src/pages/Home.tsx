@@ -194,8 +194,6 @@ const Home = () => {
   const { logout } = useLoginContext();
   const [open, setOpen] = React.useState(true);
 
-  console.log(currentMonth, "currentMonth");
-
   React.useEffect(() => {
     getExpenses();
     getCategory();
@@ -246,9 +244,9 @@ const Home = () => {
               pr: "24px", // keep right padding when drawer closed
             }}
           >
-            <Chip label={`A pagar: R$ ${totalToPay}`} color="error" />
+            <Chip label={`A pagar: R$ ${totalToPay.toFixed(2)}`} color="error" />
             <Chip
-              label={`Pago: R$ ${totalPaid}`}
+              label={`Pago: R$ ${totalPaid.toFixed(2)}`}
               color="success"
               sx={{ ml: 2 }}
             />

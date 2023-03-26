@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { defaultsHeadersAxios } from "./services/connection";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register"
 
 function App() {
   function checkAuthentication() {
@@ -22,6 +23,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route
         path="/dashboard"
         element={

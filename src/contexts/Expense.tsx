@@ -5,6 +5,7 @@ import {
   useState,
   useEffect,
 } from "react";
+import { DateTime } from "luxon";
 import { format } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import API from "../services/connection";
@@ -38,10 +39,109 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
   const [category, setCategory] = useState([]);
 
+  const [formData, setFormData] = useState({
+    expense: "",
+    value: "",
+    date: null,
+    category: "",
+    status: "",
+    month: null,
+  });
+
+  const monthCurrent = new Date().getMonth() + 1;
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handleDateChange = (date) => {
+    // console.log(date, "DATE")
+    setFormData({ ...formData, date });
+  };
+
+  function generateMonthList() {
+    let date = new Date();
+    let monthsOfYear = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+    let currentMonthGenerate = date.getMonth();
+
+    return monthsOfYear.map((month, index) => {
+      return { month: month, value: String(index + 1) };
+    });
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const categoryAndColor = category.find(
+      (item) => item.name === formData.category
+    );
+    const data = {
+      name: formData.expense,
+      value: formData.value,
+      invoice_due_date: format(new Date(formData.date), "yyyy-MM-dd"),
+      category: categoryAndColor.name,
+      color: categoryAndColor.color,
+      column:
+        formData.status ||
+        (Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY"),
+      month_reference: formData.month,
+      payment_status: "PENDING",
+    };
+    createExpenses(data);
+  };
+
   const [openModal, setOpenModal] = useState<any>({
     delete: false,
     create: false,
   });
+
+  const editExpense = (expense) => {
+    // console.log(expense, "expense", new Date(expense.invoiceDueDate).toISOString())
+    setOpenModal({
+      delete: false,
+      create: true,
+    })
+
+    const dateTime = DateTime.fromISO(expense.invoiceDueDate);
+
+    const muiXDate = {
+      M2: dateTime.month,
+      $D: dateTime.day,
+      $H: dateTime.hour,
+      $L: dateTime.locale,
+      $M: dateTime.minute,
+      $W: dateTime.weekday,
+      $d: dateTime.toJSDate(),
+      $m: dateTime.month - 1,
+      $ms: dateTime.millisecond,
+      $s: dateTime.second,
+      $u: undefined,
+      $x: {},
+      $y: dateTime.year,
+    };
+
+    setFormData({
+      expense: expense.name,
+      value: expense.value,
+      date: muiXDate,
+      category: expense.category,
+      status: expense.column,
+      month: expense,
+    })
+  }
 
   const closeToast = () => {
     setToastIsOpen({
@@ -73,7 +173,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       date.setFullYear(new Date().getFullYear());
       return date;
     } else {
-      return null; // Retorna null se o nome do mês não for encontrado no array de meses.
+      return null;
     }
   }
 
@@ -208,6 +308,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         toastIsOpen,
         getExpenses,
         deleteExpense,
+        formData,
         createExpenses,
         loading,
         closeToast,
@@ -219,8 +320,14 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
         changeModalDelete,
         totalToPay,
         login,
+        monthCurrent,
+        handleChange,
+        handleDateChange,
+        generateMonthList,
+        handleSubmit,
         expenseToDelete,
         changeModalCreate,
+        editExpense,
         openModal,
         getCategory,
         category,

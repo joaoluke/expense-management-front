@@ -10,23 +10,20 @@ const API = axios.create({
   baseURL: apiUrl,
 });
 
-
 API.interceptors.response.use(
   function (res) {
-    console.log(res, "res")
-    return res
+    return res;
   },
   function (err) {
-    console.log(err.response, "err.response")
     if (err.response && err.response.status === 401) {
-      localStorage.removeItem('token')
-      window.location.pathname = '/'
+      localStorage.removeItem("token");
+      window.location.pathname = "/";
     }
-    return Promise.reject(err)
+    return Promise.reject(err);
   }
-)
+);
 
-export default API
+export default API;
 
 export const defaultsHeadersAxios = (token: string) => {
   API.defaults.headers.common["Authorization"] = `Bearer ${token}`;

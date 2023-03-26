@@ -19,68 +19,15 @@ export const Modal = () => {
     category,
     openModal,
     createExpenses,
+    handleChange,
+    handleDateChange,
+    handleSubmit,
+    formData,
+    generateMonthList,
+    monthCurrent,
   } = useExpensesContext();
 
-  const [formData, setFormData] = useState({
-    expense: "",
-    value: "",
-    date: null,
-    category: "",
-    status: "",
-    month: null
-  });
-
-  const monthCurrent = new Date().getMonth() + 1;
-
-  const handleChange = (event) => {
-    console.log(event.target, event.target.value);
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
-
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, date });
-  };
-
-  function generateMonthList() {
-    let date = new Date();
-    let monthsOfYear = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    let currentMonthGenerate = date.getMonth();
-    
-    return monthsOfYear.map((month, index) => {
-      return { month: month, value: String(index + 1 )};
-    });
-  }
-
-  console.log(formData.month,monthCurrent, Number(formData.month) < Number(monthCurrent) , "<<<<<<<")
-  
-  console.log(generateMonthList());
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(
-      new Date(formData.date),
-      format(new Date(formData.date), "yyyy-MM-dd")
-    );
-    
-    console.log("Input 1:", formData.status);
-
-    const categoryAndColor = category.find(
-      (item) => item.name === formData.category
-    );
-    const data = {
-      name: formData.expense,
-      value: formData.value,
-      invoice_due_date: format(new Date(formData.date), "yyyy-MM-dd"),
-      category: categoryAndColor.name,
-      color: categoryAndColor.color,
-      column: formData.status || (Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY"),
-      month_reference: formData.month,
-      payment_status: "PENDING",
-    };
-    createExpenses(data);
-  };
-
-  
+  console.log(formData, "FORM")
 
   return (
     <Dialog open={true} onClose={() => null} fullWidth>
@@ -116,8 +63,10 @@ export const Modal = () => {
                 select
                 fullWidth
               >
-                {category.map((item) => (
-                  <MenuItem value={item.name}>{item.name}</MenuItem>
+                {category.map((item, index) => (
+                  <MenuItem key={index} value={item.name}>
+                    {item.name}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
@@ -147,8 +96,10 @@ export const Modal = () => {
                 select
                 fullWidth
               >
-                {generateMonthList().map((item)=>(
-                  <MenuItem value={item.value}>{item.month}</MenuItem>
+                {generateMonthList().map((item, index) => (
+                  <MenuItem key={index} value={item.value}>
+                    {item.month}
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
