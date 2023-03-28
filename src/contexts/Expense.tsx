@@ -97,7 +97,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       column:
         formData.status ||
         (Number(formData.month) < Number(monthCurrent) ? "PAID" : "TO_PAY"),
-      month_reference: formData.month,
+      month_reference: formData.month || null,
       payment_status: "PENDING",
     };
     createExpenses(data);
@@ -113,7 +113,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
     setOpenModal({
       delete: false,
       create: true,
-    })
+    });
 
     const dateTime = DateTime.fromISO(expense.invoiceDueDate);
 
@@ -140,8 +140,8 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
       category: expense.category,
       status: expense.column,
       month: expense,
-    })
-  }
+    });
+  };
 
   const closeToast = () => {
     setToastIsOpen({
@@ -198,6 +198,11 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
   const [currentMonth, setCurrentMonth] = useState(formatDate(new Date()));
 
   const changeMonth = (value) => {
+    if (!value) {
+      getExpenses(null);
+      setCurrentMonth({ month: null, value: null });
+      return;
+    }
     getExpenses(formatDate(getDataPorMes(value)));
     setCurrentMonth(formatDate(getDataPorMes(value)));
   };
@@ -208,7 +213,7 @@ const ExpensesContextProvider = ({ children }: PropsExpensesProviders) => {
 
     const response = await API.get("expenses/", {
       params: {
-        month: value.value,
+        month: value ? value.value : "null",
       },
     });
 

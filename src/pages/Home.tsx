@@ -102,6 +102,12 @@ const mainListItems = (month, click) => (
     >
       <ListItemText primary="Dezembro" />
     </ListItemButton>
+    <ListItemButton
+      selected={month === null}
+      onClick={(e: any) => click(null)}
+    >
+      <ListItemText primary="Despesas gerais" />
+    </ListItemButton>
   </>
 );
 

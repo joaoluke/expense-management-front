@@ -27,8 +27,6 @@ export const Modal = () => {
     monthCurrent,
   } = useExpensesContext();
 
-  console.log(formData, "FORM")
-
   return (
     <Dialog open={true} onClose={() => null} fullWidth>
       <DialogTitle>{"Nova Despesa"}</DialogTitle>
@@ -92,7 +90,6 @@ export const Modal = () => {
                 onChange={handleChange}
                 name="month"
                 label="Mes de Referencia"
-                required
                 select
                 fullWidth
               >
